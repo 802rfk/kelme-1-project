@@ -1,35 +1,11 @@
 import * as THREE from 'three'
 import { useEffect, useState, useRef } from 'react'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import { useThree } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei'
 
 export default function BootModel({ onHotspotClick }: { onHotspotClick?: (id: string) => void }) {
   const groupRef = useRef<THREE.Group | null>(null)
-  const { scene } = useThree()
-  const [loadedGLTF, setLoadedGLTF] = useState<THREE.Group | null>(null)
 
-  useEffect(() => {
-    const loader = new GLTFLoader()
-    const dracoLoader = new DRACOLoader()
-    dracoLoader.setDecoderPath('/draco/')
-    loader.setDRACOLoader(dracoLoader)
-    loader.load(
-      '/models/kelme-neo.glb',
-      (gltf) => {
-        const obj = gltf.scene as THREE.Group
-        obj.scale.set(1, 1, 1)
-        setLoadedGLTF(obj)
-        scene.add(obj)
-      },
-      undefined,
-      (err) => {
-        console.warn('GLTF load failed, using placeholder', err)
-      }
-    )
-  }, [scene])
-
-  // Placeholder geometry (cuando no hay GLTF)
   const Placeholder = () => (
     <group>
       <mesh>
@@ -60,7 +36,7 @@ export default function BootModel({ onHotspotClick }: { onHotspotClick?: (id: st
 
   return (
     <group ref={groupRef}>
-      {loadedGLTF ? <primitive object={loadedGLTF} /> : <Placeholder />}
+      <Placeholder />
     </group>
   )
 }
